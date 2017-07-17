@@ -14,17 +14,14 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
+/** БРАУЗЕР ---------------------------------------------------- **/
 void MainWindow::createWebPage(QUrl url){
 	// Создаем новую вкладку в браузере
 	WebEngineView* newPage = new WebEngineView();
 	newPage->setUrl(url);
 	newPage->resize(ui->tabsWebPages->width(), ui->tabsWebPages->height());
-	ui->tabsWebPages->addTab(newPage, "Новая вкладка");
+	ui->tabsWebPages->addTab(newPage, "");
 	newPage->show();
-
-	// Добавляем ее в карту
-	m_webPages.insert(ui->tabsWebPages->currentIndex(), newPage);
-	m_tabPages.insert(ui->tabsWebPages->currentIndex(), newPage->getWebPageId());
 
 	// Коннектим линию загрузки с загрузкой страницы и смену url-а
 	connect(newPage, &WebEngineView::loadProgress, this, &MainWindow::pageProgress);
@@ -71,6 +68,7 @@ void MainWindow::pageLoaded(bool ok){
 			WebEngineView* pageSender = (WebEngineView*)sender();
 			if(page->getWebPageId() == pageSender->getWebPageId()){
 				ui->tabsWebPages->setTabText(i, pageSender->title().size() > 15 ? pageSender->title().mid(0, 12)+QString("...") : pageSender->title());
+				if(ui->tabsWebPages->tabText(i) == "about:blank") ui->tabsWebPages->setTabText(i, "Новая вкладка");
 			}
 		}
 	}
@@ -138,3 +136,5 @@ void MainWindow::on_btReloadStop_clicked()
 		currPage->stop();
 	}
 }
+/** БРАУЗЕР ---------------------------------------------------- **/
+
