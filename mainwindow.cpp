@@ -102,6 +102,7 @@ void MainWindow::on_editPageUrl_returnPressed()
 
 void MainWindow::on_tabsWebPages_tabCloseRequested(int index)
 {
+	// Закрываем текущую вкладку и дисконнектим все сигналы
 	WebEngineView* closedPage = (WebEngineView*)ui->tabsWebPages->widget(index);
 	if(ui->tabsWebPages->count() == 1){
 		closedPage->setUrl(QUrl(""));
@@ -113,4 +114,27 @@ void MainWindow::on_tabsWebPages_tabCloseRequested(int index)
 		closedPage->deleteLater();
 	}
 
+}
+
+void MainWindow::on_btBack_clicked()
+{
+	WebEngineView* currPage = (WebEngineView*)ui->tabsWebPages->currentWidget();
+	currPage->back();
+}
+
+void MainWindow::on_btForward_clicked()
+{
+	WebEngineView* currPage = (WebEngineView*)ui->tabsWebPages->currentWidget();
+	currPage->forward();
+}
+
+void MainWindow::on_btReloadStop_clicked()
+{
+	// Если страница загружается, останавливаем, иначе перезагружаем
+	WebEngineView* currPage = (WebEngineView*)ui->tabsWebPages->currentWidget();
+	if(ui->btReloadStop->text() == "O"){
+		currPage->reload();
+	}else{
+		currPage->stop();
+	}
 }

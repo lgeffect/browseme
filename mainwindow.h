@@ -30,6 +30,12 @@ private slots:
 
 	void on_tabsWebPages_tabCloseRequested(int index);
 
+	void on_btBack_clicked();
+
+	void on_btForward_clicked();
+
+	void on_btReloadStop_clicked();
+
 private:
 	Ui::MainWindow *ui;
 	QMap<int, WebEngineView*> m_webPages;
