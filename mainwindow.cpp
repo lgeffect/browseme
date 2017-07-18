@@ -6,7 +6,18 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	networkManager = new QNetworkAccessManager();
 	createWebPage(QUrl(""));
+
+	// Соединяем сигнал нажатия на галочках с слотом изменения настроек
+	connect(ui->cbAllowAutoImg, SIGNAL(clicked(bool)), this, SLOT(on_allowsChanged_clicked()));
+	connect(ui->cbAllowGeoloc, SIGNAL(clicked(bool)), this, SLOT(on_allowsChanged_clicked()));
+	connect(ui->cbAllowInsecContent, SIGNAL(clicked(bool)), this, SLOT(on_allowsChanged_clicked()));
+	connect(ui->cbAllowJavaScripts, SIGNAL(clicked(bool)), this, SLOT(on_allowsChanged_clicked()));
+	connect(ui->cbAllowJSClipboard, SIGNAL(clicked(bool)), this, SLOT(on_allowsChanged_clicked()));
+	connect(ui->cbAllowJSOpen, SIGNAL(clicked(bool)), this, SLOT(on_allowsChanged_clicked()));
+	connect(ui->cbAllowPlugins, SIGNAL(clicked(bool)), this, SLOT(on_allowsChanged_clicked()));
+	connect(ui->cbAllowSound, SIGNAL(clicked(bool)), this, SLOT(on_allowsChanged_clicked()));
 }
 
 MainWindow::~MainWindow()
@@ -15,18 +26,27 @@ MainWindow::~MainWindow()
 }
 
 /** БРАУЗЕР ---------------------------------------------------- **/
-void MainWindow::createWebPage(QUrl url){
+int MainWindow::createWebPage(QUrl url){
 	// Создаем новую вкладку в браузере
 	WebEngineView* newPage = new WebEngineView();
 	newPage->setUrl(url);
 	newPage->resize(ui->tabsWebPages->width(), ui->tabsWebPages->height());
-	ui->tabsWebPages->addTab(newPage, "");
+	//newPage->settings()->setAttribute(QWebEngineSettings::AutoLoadIconsForPage, true);
+	newPage->settings()->setAttribute(QWebEngineSettings::HyperlinkAuditingEnabled, true);
+	int id = ui->tabsWebPages->addTab(newPage, "");
 	newPage->show();
+
+	// Устанавливаем наш обработчик запросов
+
+	// Обновляем настройки страниц
+	on_allowsChanged_clicked();
 
 	// Коннектим линию загрузки с загрузкой страницы и смену url-а
 	connect(newPage, &WebEngineView::loadProgress, this, &MainWindow::pageProgress);
 	connect(newPage, &WebEngineView::urlChanged, this,  &MainWindow::pageUrlChanged);
 	connect(newPage, &WebEngineView::loadFinished, this, &MainWindow::pageLoaded);
+
+	return id;
 }
 
 void MainWindow::pageProgress(int progress){
@@ -68,6 +88,7 @@ void MainWindow::pageLoaded(bool ok){
 			WebEngineView* pageSender = (WebEngineView*)sender();
 			if(page->getWebPageId() == pageSender->getWebPageId()){
 				ui->tabsWebPages->setTabText(i, pageSender->title().size() > 15 ? pageSender->title().mid(0, 12)+QString("...") : pageSender->title());
+				// Не работает о_О ui->tabsWebPages->setTabIcon(i, pageSender->icon());
 				if(ui->tabsWebPages->tabText(i) == "about:blank"){
 					ui->tabsWebPages->setTabText(i, "Новая вкладка");
 				}else{
@@ -89,7 +110,7 @@ void MainWindow::pageLoaded(bool ok){
 
 void MainWindow::on_btAddPage_clicked()
 {
-	createWebPage(QUrl(""));
+	ui->tabsWebPages->setCurrentIndex(createWebPage(QUrl("")));
 }
 
 void MainWindow::on_tabsWebPages_currentChanged(int index)
@@ -106,7 +127,7 @@ void MainWindow::on_editPageUrl_returnPressed()
 	// Приводим наш url к нормальному виду и переходим по нему
 	QString url = ui->editPageUrl->text();
 	if(url.startsWith("http:\\\\") || url.startsWith("ftp:\\\\")) url.replace(":\\\\", "://");
-	if(!url.startsWith("http")) url = "http://" + url;
+	if(!url.startsWith("http") && !url.startsWith("ftp") && !url.startsWith("file")) url = "http://" + url;
 	WebEngineView* currPage = (WebEngineView*)ui->tabsWebPages->currentWidget();
 	currPage->load(QUrl(url));
 }
@@ -152,9 +173,58 @@ void MainWindow::on_btReloadStop_clicked()
 
 void MainWindow::on_treeBrowserHistory_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-	if(column == 0 && (item->text(0).startsWith("http") || item->text(0).startsWith("ftp"))){
-		createWebPage(QUrl(item->text(0)));
+	// Переходим на новую вкладку и на страницу из истории
+	if(column == 0 && (item->text(0).startsWith("http") || item->text(0).startsWith("ftp") || item->text(0).startsWith("file"))){
+		ui->tabsBrowser->setCurrentIndex(0);
+		ui->tabsWebPages->setCurrentIndex(createWebPage(QUrl(item->text(0))));
 	}
 }
+
+void MainWindow::on_allowsChanged_clicked()
+{
+	// При изменении разрешений, обновляем настройки страниц
+	for(int i = 0;i<ui->tabsWebPages->count();i++){
+		WebEngineView* page = (WebEngineView*)ui->tabsWebPages->widget(i);
+
+		if(ui->cbAllowAutoImg->isChecked())
+				page->settings()->setAttribute(QWebEngineSettings::AutoLoadImages, true);
+		else	page->settings()->setAttribute(QWebEngineSettings::AutoLoadImages, false);
+
+		if(ui->cbAllowJavaScripts->isChecked())
+				page->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
+		else	page->settings()->setAttribute(QWebEngineSettings::JavascriptEnabled, false);
+
+
+		if(ui->cbAllowPlugins->isChecked())
+				page->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+		else	page->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, false);
+
+
+		if(ui->cbAllowGeoloc->isChecked())
+				page->settings()->setAttribute(QWebEngineSettings::AllowGeolocationOnInsecureOrigins, true);
+		else	page->settings()->setAttribute(QWebEngineSettings::AllowGeolocationOnInsecureOrigins, false);
+
+
+		if(ui->cbAllowInsecContent->isChecked())
+				page->settings()->setAttribute(QWebEngineSettings::AllowRunningInsecureContent, true);
+		else	page->settings()->setAttribute(QWebEngineSettings::AllowRunningInsecureContent, false);
+
+
+		if(ui->cbAllowJSClipboard->isChecked())
+				page->settings()->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, true);
+		else	page->settings()->setAttribute(QWebEngineSettings::JavascriptCanAccessClipboard, false);
+
+
+		if(ui->cbAllowJSOpen->isChecked())
+				page->settings()->setAttribute(QWebEngineSettings::JavascriptCanOpenWindows, true);
+		else	page->settings()->setAttribute(QWebEngineSettings::JavascriptCanOpenWindows, false);
+
+		if(ui->cbAllowSound->isChecked())
+				page->page()->setAudioMuted(false);
+		else	page->page()->setAudioMuted(true);
+
+	}
+}
+
 /** БРАУЗЕР ---------------------------------------------------- **/
 

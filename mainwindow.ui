@@ -302,6 +302,134 @@
               <property name="title">
                <string>Разрешения:</string>
               </property>
+              <widget class="QCheckBox" name="cbAllowJavaScripts">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>125</y>
+                 <width>291</width>
+                 <height>23</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Разрешить исполнение сценариев JavaScript</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+              <widget class="QCheckBox" name="cbAllowPlugins">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>35</y>
+                 <width>247</width>
+                 <height>23</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string> Разрешить использование плагинов</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+              <widget class="QCheckBox" name="cbAllowAutoImg">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>65</y>
+                 <width>328</width>
+                 <height>23</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Разрешить автоматическую загрузку изображений</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+              <widget class="QCheckBox" name="cbAllowJSClipboard">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>185</y>
+                 <width>291</width>
+                 <height>23</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Разрешить JS доступ к буферу обмена</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+              <widget class="QCheckBox" name="cbAllowJSOpen">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>155</y>
+                 <width>291</width>
+                 <height>23</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Разрешить JS открывать окна</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+              <widget class="QCheckBox" name="cbAllowInsecContent">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>215</y>
+                 <width>301</width>
+                 <height>23</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Разрешить исполнять незащищенный контент</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+              <widget class="QCheckBox" name="cbAllowGeoloc">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>245</y>
+                 <width>291</width>
+                 <height>23</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Разрешить геолокацию</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+              <widget class="QCheckBox" name="cbAllowSound">
+               <property name="geometry">
+                <rect>
+                 <x>10</x>
+                 <y>95</y>
+                 <width>291</width>
+                 <height>23</height>
+                </rect>
+               </property>
+               <property name="text">
+                <string>Разрешить воспроизведение звука</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
              </widget>
             </item>
             <item>

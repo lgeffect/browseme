@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QTreeWidgetItem>
+#include <QWebEngineSettings>
 #include "webengineview.h"
 
 namespace Ui {
@@ -18,7 +19,7 @@ public:
 	~MainWindow();
 
 	/** БРАУЗЕР ---------------------------------------------------- **/
-	void createWebPage(QUrl url);
+	int createWebPage(QUrl url);
 	void pageProgress(int progress);
 	void pageUrlChanged(QUrl url);
 	void pageLoaded(bool ok);
@@ -34,10 +35,12 @@ private slots:
 	void on_btForward_clicked();
 	void on_btReloadStop_clicked();
 	void on_treeBrowserHistory_itemDoubleClicked(QTreeWidgetItem *item, int column);
+	void on_allowsChanged_clicked();
 	/** БРАУЗЕР ---------------------------------------------------- **/
 
 private:
 	Ui::MainWindow *ui;
+	QNetworkAccessManager* networkManager;
 };
 
 #endif // MAINWINDOW_H
