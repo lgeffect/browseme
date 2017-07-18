@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTreeWidgetItem>
 #include "webengineview.h"
 
 namespace Ui {
@@ -32,6 +33,7 @@ private slots:
 	void on_btBack_clicked();
 	void on_btForward_clicked();
 	void on_btReloadStop_clicked();
+	void on_treeBrowserHistory_itemDoubleClicked(QTreeWidgetItem *item, int column);
 	/** БРАУЗЕР ---------------------------------------------------- **/
 
 private:

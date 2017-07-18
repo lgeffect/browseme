@@ -68,7 +68,20 @@ void MainWindow::pageLoaded(bool ok){
 			WebEngineView* pageSender = (WebEngineView*)sender();
 			if(page->getWebPageId() == pageSender->getWebPageId()){
 				ui->tabsWebPages->setTabText(i, pageSender->title().size() > 15 ? pageSender->title().mid(0, 12)+QString("...") : pageSender->title());
-				if(ui->tabsWebPages->tabText(i) == "about:blank") ui->tabsWebPages->setTabText(i, "Новая вкладка");
+				if(ui->tabsWebPages->tabText(i) == "about:blank"){
+					ui->tabsWebPages->setTabText(i, "Новая вкладка");
+				}else{
+					// Добавляем адрес в историю вместе с датой
+					QTreeWidgetItem* item = new QTreeWidgetItem(ui->treeBrowserHistory);
+
+					QDateTime datetime = QDateTime::currentDateTime();
+					item->setText(0, pageSender->title());
+					item->setText(1, datetime.toString());
+
+					ui->treeBrowserHistory->addTopLevelItem(item);
+					QTreeWidgetItem* subitem = new QTreeWidgetItem(item);
+					subitem->setText(0,pageSender->url().toString());
+				}
 			}
 		}
 	}
@@ -134,6 +147,13 @@ void MainWindow::on_btReloadStop_clicked()
 		currPage->reload();
 	}else{
 		currPage->stop();
+	}
+}
+
+void MainWindow::on_treeBrowserHistory_itemDoubleClicked(QTreeWidgetItem *item, int column)
+{
+	if(column == 0 && (item->text(0).startsWith("http") || item->text(0).startsWith("ftp"))){
+		createWebPage(QUrl(item->text(0)));
 	}
 }
 /** БРАУЗЕР ---------------------------------------------------- **/
