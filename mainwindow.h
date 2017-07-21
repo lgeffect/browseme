@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTreeWidgetItem>
 #include <QWebEngineSettings>
+#include <QWebEngineUrlRequestInterceptor>
+#include <QNetworkProxy>
 #include "webengineview.h"
 
 namespace Ui {
@@ -36,11 +38,15 @@ private slots:
 	void on_btReloadStop_clicked();
 	void on_treeBrowserHistory_itemDoubleClicked(QTreeWidgetItem *item, int column);
 	void on_allowsChanged_clicked();
+	void on_btTurnProxy_clicked();
+	void on_cbProxyAuth_clicked();
 	/** БРАУЗЕР ---------------------------------------------------- **/
+
 
 private:
 	Ui::MainWindow *ui;
 	QNetworkAccessManager* networkManager;
+	QNetworkProxy proxy;
 };
 
 #endif // MAINWINDOW_H

@@ -59,9 +59,11 @@ void MainWindow::pageProgress(int progress){
 		// Изменяем надпись кнопки
 		if(progress == 100){
 			progress = 0;
-			ui->btReloadStop->setText("O");
+			ui->btReloadStop->setIcon(QIcon(":/ico4.png"));
+			ui->btReloadStop->setChecked(false);
 		}else{
-			ui->btReloadStop->setText("X");
+			ui->btReloadStop->setIcon(QIcon(":/ico3.png"));
+			ui->btReloadStop->setChecked(true);
 		}
 		// Устанавливаем текущее значение загрузки страницы
 		ui->barLoadProgress->setValue(progress);
@@ -117,7 +119,8 @@ void MainWindow::on_tabsWebPages_currentChanged(int index)
 {
 	// При смене вкладок изменяем и все управляющие элементы
 	ui->barLoadProgress->setValue(0);
-	ui->btReloadStop->setText("O");
+	ui->btReloadStop->setIcon(QIcon(":/ico4.png"));
+	ui->btReloadStop->setChecked(false);
 	WebEngineView* currPage = (WebEngineView*)ui->tabsWebPages->widget(index);
 	ui->editPageUrl->setText(currPage->url().toString());
 }
@@ -164,10 +167,12 @@ void MainWindow::on_btReloadStop_clicked()
 {
 	// Если страница загружается, останавливаем, иначе перезагружаем
 	WebEngineView* currPage = (WebEngineView*)ui->tabsWebPages->currentWidget();
-	if(ui->btReloadStop->text() == "O"){
+	if(ui->btReloadStop->isChecked()){
 		currPage->reload();
+		ui->btReloadStop->setChecked(true);
 	}else{
 		currPage->stop();
+		ui->btReloadStop->setChecked(false);
 	}
 }
 
@@ -226,5 +231,31 @@ void MainWindow::on_allowsChanged_clicked()
 	}
 }
 
+void MainWindow::on_btTurnProxy_clicked()
+{
+	if(ui->btTurnProxy->isChecked()){
+		proxy.setType(QNetworkProxy::HttpProxy);
+		proxy.setHostName(ui->editProxyIp->text().isEmpty() ? "localhost" : ui->editProxyIp->text());
+
+		if(!ui->gbProxyAuth->isEnabled()){
+			proxy.setUser(ui->editProxyUser->text());
+			proxy.setPassword(ui->editProxyPass->text());
+		}
+
+		proxy.setPort((quint16)ui->sbProxyPort->value());
+		QNetworkProxy::setApplicationProxy(proxy);
+	}else{
+		QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
+	}
+}
+
+void MainWindow::on_cbProxyAuth_clicked()
+{
+	ui->gbProxyAuth->setEnabled(ui->gbProxyAuth->isEnabled() == true ? false : true);
+}
 /** БРАУЗЕР ---------------------------------------------------- **/
+
+
+
+
 
